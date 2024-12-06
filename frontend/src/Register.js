@@ -22,6 +22,11 @@ const Register = () => {
       return;
     }
 
+    if (!formData.password || formData.password.trim() === "") {
+      setError("Password cannot be empty");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch("http://localhost:8080/api/auth/register", {
@@ -29,7 +34,10 @@ const Register = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          username: formData.username.trim(),
+          password: formData.password.trim()
+        }),
         credentials: "include",
       });
 

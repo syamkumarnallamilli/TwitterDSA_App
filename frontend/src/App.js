@@ -7,11 +7,15 @@ import {
 } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
+import CacheMonitor from "./components/CacheMonitor";
+import TweetList from "./components/TweetList";
+import CreateTweet from "./components/CreateTweet";
 import "./App.css";
 
 // Simple Dashboard component
 const Dashboard = () => {
   const [username, setUsername] = React.useState("");
+  const [tweets, setTweets] = React.useState([]);
 
   const handleLogout = async () => {
     try {
@@ -33,6 +37,10 @@ const Dashboard = () => {
     }
   };
 
+  const handleTweetCreated = (newTweet) => {
+    setTweets((prevTweets) => [newTweet, ...prevTweets]);
+  };
+
   React.useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
@@ -47,6 +55,15 @@ const Dashboard = () => {
       <button onClick={handleLogout} style={styles.logoutButton}>
         Logout
       </button>
+      <div style={styles.content}>
+        <div style={styles.tweetsSection}>
+          <CreateTweet onTweetCreated={handleTweetCreated} />
+          <TweetList tweets={tweets} setTweets={setTweets} />
+        </div>
+        <div style={styles.cacheSection}>
+          <CacheMonitor />
+        </div>
+      </div>
     </div>
   );
 };
@@ -90,14 +107,26 @@ const styles = {
     backgroundColor: "#f5f5f5",
   },
   dashboard: {
-    padding: "40px",
-    maxWidth: "800px",
+    padding: "20px",
+    maxWidth: "1200px",
     margin: "0 auto",
-    textAlign: "center",
     backgroundColor: "white",
     borderRadius: "8px",
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    marginTop: "40px",
+  },
+  content: {
+    display: "grid",
+    gridTemplateColumns: "2fr 1fr",
+    gap: "20px",
+    marginTop: "20px",
+  },
+  tweetsSection: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+  },
+  cacheSection: {
+    minWidth: "300px",
   },
   logoutButton: {
     padding: "10px 20px",

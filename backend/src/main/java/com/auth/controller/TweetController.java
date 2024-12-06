@@ -9,12 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tweets")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000")
 public class TweetController {
     
     @Autowired
@@ -25,8 +24,16 @@ public class TweetController {
         private String content;
     }
 
+    @GetMapping
+    public ResponseEntity<Page<Tweet>> getTweets(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(tweetService.getTweets(page, size));
+    }
+
     @PostMapping
-    public ResponseEntity<?> createTweet(   //? to allow different responses
+    public ResponseEntity<?> createTweet(
         @RequestBody TweetRequest request,
         @AuthenticationPrincipal UserDetails userDetails
     ) {
@@ -43,14 +50,6 @@ public class TweetController {
             return ResponseEntity.badRequest()
                 .body(Map.of("error", "Failed to create tweet"));
         }
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<Tweet>> getTweets(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size
-    ) {
-        return ResponseEntity.ok(tweetService.getTweets(page, size));
     }
 
     @GetMapping("/user/{username}")

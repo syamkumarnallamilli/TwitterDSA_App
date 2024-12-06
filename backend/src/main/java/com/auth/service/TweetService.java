@@ -1,4 +1,3 @@
-
 package com.auth.service;
 
 import com.auth.model.Tweet;
@@ -38,24 +37,21 @@ public class TweetService {
         return tweetRepository.save(tweet);
     }
 
+    public Page<Tweet> getUserTweets(String username, int page, int size) {
+        if (size > 50) {
+            size = 50; // Limit maximum page size
+        }
+        return tweetRepository.findByUserUsername(
+            username,
+            PageRequest.of(page, size)
+        );
+    }
+
     public Page<Tweet> getTweets(int page, int size) {
         if (size > 50) {
             size = 50; // Limit maximum page size
         }
         return tweetRepository.findAllByOrderByTimestampDesc(
-            PageRequest.of(page, size)
-        );
-    }
-
-    public Page<Tweet> getUserTweets(String username, int page, int size) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-            
-        if (size > 50) {
-            size = 50; // Limit maximum page size
-        }
-        return tweetRepository.findByUserOrderByTimestampDesc(
-            user,
             PageRequest.of(page, size)
         );
     }
