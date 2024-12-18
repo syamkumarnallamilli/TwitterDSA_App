@@ -22,8 +22,8 @@ public class CacheService {
     private static final int MAX_CACHE_SIZE = 10000; // Maximum number of users cache can hold before eviction starts
     private TreeNode root; // stores root node of bst
     private int size = 0;//current number of users in cache
-    private Map<String, Long> lastAccessTime = new HashMap<>();// store the last access time of each user, used for implementing the Least Recently Used (LRU) eviction policy.
-    private Map<String, Integer> cacheHits = new HashMap<>();//A HashMap to track how many times each user has been accessed in the cache.
+    private Map<String, Long> lastAccessTime = new HashMap<>();
+    private Map<String, Integer> cacheHits = new HashMap<>();
     private long totalRequests = 0;
     private long cacheHitCount = 0;
     private long cacheMissCount = 0;
@@ -31,7 +31,7 @@ public class CacheService {
     @Autowired
     private UserRepository userRepository;//injects user repository to fetch user data when user is not present in cache
     public boolean isCacheEmpty() {
-        //returns true if the root of the BST is null, meaning the cache has no data.
+        
 
                 logger.info("Checking if cache is empty...");
                 return root == null;
@@ -41,23 +41,17 @@ public class CacheService {
     public void addUserToCache(User user) {
         logger.info("Adding user to cache: {}", user.getUsername());
         if (size >= MAX_CACHE_SIZE)
-        //If the cache exceeds the maximum size, calls 
-        //the evictLeastRecentlyUsed method to remove the least recently accessed user.
+        
         {
             evictLeastRecentlyUsed();
         }
-        //Inserts the user into the BST using the recursive insertRec method.
-//Updates the user's last access time in lastAccessTime.
-//Increments the size of the cache.
+        
         root = insertRec(root, user);
         lastAccessTime.put(user.getUsername(), System.currentTimeMillis());
         size++;
     }
 
-// Recursive insertion of user in the BST
-//Compares the username of the new user with the current node:
-//If smaller, inserts the user in the left subtree.
-//If larger, inserts the user in the right subtree.
+
     private TreeNode insertRec(TreeNode root, User user) {
         if (root == null) {
             return new TreeNode(user);
@@ -78,8 +72,7 @@ public class CacheService {
         totalRequests++;
 
         TreeNode node = searchNodeForUsername(root, username);
-        //Searches the BST for the user using the searchNodeForUsername method.
-        //If the user is not found, logs a cache miss and increments cacheMissCount.
+        
         if (node == null) {
             logger.warn("Cache MISS for username: {}", username);
             cacheMissCount++;
@@ -89,9 +82,6 @@ public class CacheService {
             }
             return userFromDB;
         }
-    //  If the user is found in the BST:
-    //  Logs a cache hit and increments cacheHitCount.
-//  Updates the access frequency in cacheHits and the last access time in lastAccessTime.
         logger.info("Cache HIT for username: {}", username);
         cacheHitCount++;
         cacheHits.merge(username, 1, Integer::sum);
@@ -109,9 +99,6 @@ public class CacheService {
         if (comparison == 0) {
             return root;
         }
-//Recursively traverses the BST:
-//Returns the node if the username matches.
-//Searches the left or right subtree based on the comparison resul
         return comparison < 0 ? searchNodeForUsername(root.getLeft(), username)
                               : searchNodeForUsername(root.getRight(), username);
     }
@@ -141,9 +128,7 @@ public class CacheService {
                         .collect(Collectors.toList());
                 }
             
-    // Evict the least recently used user
-    //Identifies the least recently accessed user using lastAccessTime.
-//Removes the user from both the BST and lastAccessTime.
+    
 
     private void evictLeastRecentlyUsed() {
         String lruUser = lastAccessTime.entrySet()
