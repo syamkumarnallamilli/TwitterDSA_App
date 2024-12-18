@@ -27,8 +27,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Autowired
-    private SessionManager sessionManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -70,7 +68,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 } else {
                     logger.warn("Invalid token for user: {}", username);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
+                    return; 
                 }
             } catch (Exception e) {
                 logger.error("Error during token validation: {}", e.getMessage());
@@ -78,7 +76,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
+  
         chain.doFilter(request, response);
     }
 }

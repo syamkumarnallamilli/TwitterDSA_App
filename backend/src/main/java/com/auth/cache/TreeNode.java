@@ -1,21 +1,22 @@
 
 package com.auth.cache;
 
-import com.auth.model.User; // Assuming User is the model class you provided
+import com.auth.model.User;
 
+// Represents a node in the binary search tree for caching
 public class TreeNode {
-    private User user;     // Reference to the User object
+    private User user; // User data
     private TreeNode left; // Left child in the BST
     private TreeNode right; // Right child in the BST
 
-    // Constructor for TreeNode, takes a User object
+    // Constructor to initialize a TreeNode with a User
     public TreeNode(User user) {
         this.user = user;
         this.left = null;
         this.right = null;
     }
 
-    // Getter and setter for user, left, right
+    // Getters and setters for user, left, and right
     public User getUser() {
         return user;
     }

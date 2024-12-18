@@ -32,11 +32,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .antMatchers("/api/auth/**").permitAll()
+            .antMatchers("/h2-console/**").permitAll() // Allow H2 console
             .antMatchers("/api/tweets/**").authenticated()
             .antMatchers("/api/cache/**").authenticated()
             .anyRequest().authenticated()
             .and()
             .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            .and()
+            .headers().frameOptions().disable() // Disable X-Frame-Options for H2 console
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

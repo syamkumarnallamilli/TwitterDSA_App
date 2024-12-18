@@ -12,13 +12,15 @@ const Login = () => {
     setError("");
   };
 
-  const validateEmail = (email) =>
-    /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
+  const validateUsername = (username) =>
+    /^[a-zA-Z0-9_.]+$/.test(username); // Allow only letters, numbers, underscores, and dots.
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateEmail(formData.username)) {
-      setError("Invalid email format");
+    if (!validateUsername(formData.username)) {
+      setError(
+        "Invalid username format. Use only letters, numbers, underscores, and dots."
+      );
       return;
     }
 
@@ -59,12 +61,12 @@ const Login = () => {
         <input
           type="text"
           name="username"
-          placeholder="Email"
+          placeholder="Username"
           value={formData.username}
           onChange={handleChange}
           style={styles.input}
           disabled={loading}
-          autoComplete="email"
+          autoComplete="username"
         />
         <input
           type="password"

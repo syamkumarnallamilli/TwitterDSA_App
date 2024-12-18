@@ -4,6 +4,9 @@ import com.auth.model.User;
 import com.auth.security.JwtUtil;
 import com.auth.service.AuthService;
 import com.auth.service.SessionManager;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,6 +30,8 @@ public class AuthController {
     @Autowired
     private SessionManager sessionManager;
 
+     
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
@@ -35,11 +41,12 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+    
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
-        String password = credentials.get("password");
+        String password = credentials.get("password"); 
 
         Optional<User> userOpt = authService.authenticate(username, password);
         
@@ -54,6 +61,7 @@ public class AuthController {
             sessionManager.createSession(username, token);
 
             Map<String, Object> response = new HashMap<>();
+            
             response.put("token", token);
             response.put("username", username);
             return ResponseEntity.ok(response);
@@ -72,4 +80,6 @@ public class AuthController {
         }
         return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
     }
-}
+   
+    }
+

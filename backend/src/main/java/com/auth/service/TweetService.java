@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TweetService {
@@ -37,22 +38,14 @@ public class TweetService {
         return tweetRepository.save(tweet);
     }
 
-    public Page<Tweet> getUserTweets(String username, int page, int size) {
-        if (size > 50) {
-            size = 50; // Limit maximum page size
-        }
-        return tweetRepository.findByUserUsername(
-            username,
-            PageRequest.of(page, size)
+    public List<Tweet> getUserTweets(String username) {
+        
+        return tweetRepository.findByUserUsernameOrderByTimestampDesc(
+            username
         );
     }
 
-    public Page<Tweet> getTweets(int page, int size) {
-        if (size > 50) {
-            size = 50; // Limit maximum page size
-        }
-        return tweetRepository.findAllByOrderByTimestampDesc(
-            PageRequest.of(page, size)
-        );
+    public List<Tweet> getTweets() {
+        return tweetRepository.findAllByOrderByTimestampDesc();
     }
 }

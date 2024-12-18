@@ -8,21 +8,25 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
     setError("");
   };
 
-  const validateEmail = (email) =>
-    /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
+  const validateUsername = (username) =>
+    /^[a-zA-Z0-9_]{3,20}$/.test(username); // Allows alphanumeric and underscores, 3-20 characters
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateEmail(formData.username)) {
-      setError("Invalid email format");
+    const { username, password } = formData;
+
+    if (!validateUsername(username)) {
+      setError(
+        "Username must be 3-20 characters and can only contain letters, numbers, and underscores."
+      );
       return;
     }
 
-    if (!formData.password || formData.password.trim() === "") {
+    if (!password || password.trim() === "") {
       setError("Password cannot be empty");
       return;
     }
@@ -31,13 +35,8 @@ const Register = () => {
     try {
       const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: formData.username.trim(),
-          password: formData.password.trim()
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
         credentials: "include",
       });
 
@@ -63,12 +62,12 @@ const Register = () => {
         <input
           type="text"
           name="username"
-          placeholder="Email"
+          placeholder="Username"
           value={formData.username}
           onChange={handleChange}
           style={styles.input}
           disabled={loading}
-          autoComplete="email"
+          autoComplete="username"
         />
         <input
           type="password"
@@ -112,12 +111,12 @@ const styles = {
     backgroundColor: "white",
     borderRadius: "8px",
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    width: "100%",
     maxWidth: "400px",
+    width: "100%",
   },
   title: {
     textAlign: "center",
-    margin: "0 0 20px 0",
+    marginBottom: "20px",
     color: "#333",
   },
   input: {
@@ -134,6 +133,7 @@ const styles = {
     borderRadius: "4px",
     fontSize: "16px",
     cursor: "pointer",
+    transition: "background-color 0.3s ease",
     ":hover": {
       backgroundColor: "#0056b3",
     },
@@ -145,7 +145,7 @@ const styles = {
   error: {
     color: "red",
     textAlign: "center",
-    margin: "10px 0 0 0",
+    marginTop: "10px",
   },
   linkButton: {
     background: "none",
@@ -154,6 +154,8 @@ const styles = {
     cursor: "pointer",
     textDecoration: "underline",
     fontSize: "14px",
+    textAlign: "center",
+    marginTop: "10px",
   },
 };
 

@@ -1,10 +1,14 @@
 package com.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import javax.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,6 +27,6 @@ public class Tweet {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({"password", "role", "hibernateLazyInitializer", "handler"})
     private User user;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
 }

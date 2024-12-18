@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,10 +33,10 @@ public class AuthService {
     public User register(User user) {
         logger.info("Registering user with username: {}", user.getUsername());
 
-        // Validate email format
-        if (!user.getUsername().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
-            logger.warn("Registration failed: Invalid email format for username: {}", user.getUsername());
-            throw new RuntimeException("Username must be a valid email address");
+        // Validate username (Instagram-style: alphanumeric, underscores, periods)
+        if (!user.getUsername().matches("^[a-zA-Z0-9_\\.]+$")) {
+            logger.warn("Registration failed: Invalid username format for username: {}", user.getUsername());
+            throw new RuntimeException("Username can only contain letters, numbers, underscores, and periods");
         }
 
         if (userRepository.existsByUsername(user.getUsername())) {
@@ -49,22 +50,20 @@ public class AuthService {
             throw new RuntimeException("Password cannot be empty");
         }
 
-        // Set default role if not specified
         if (user.getRole() == null || user.getRole().isEmpty()) {
             user.setRole("USER");
         }
 
-        // Encrypt password before storing
+    
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
 
-        // Add the new user to the cache
+       
         cacheService.addUserToCache(savedUser);
         logger.info("User {} added to the cache after registration", user.getUsername());
 
         return savedUser;
     }
-
     // Authenticate a user with username and password
     public Optional<User> authenticate(String username, String password) {
         logger.info("Authenticating user with username: {}", username);
@@ -114,7 +113,6 @@ public class AuthService {
         logger.info("User {} logged out and session invalidated", username);
     }
 
-    // Fetch all users (cached or from the database)
     public Iterable<User> getAllUsers() {
         if (cacheService.isCacheEmpty()) {
             logger.info("Cache is empty. Fetching all users from the database...");
@@ -123,5 +121,8 @@ public class AuthService {
             logger.info("Fetching all users from the cache...");
             return cacheService.getAllUsersFromCache();
         }
-    }
+    } 
+  
+    
+
 }
